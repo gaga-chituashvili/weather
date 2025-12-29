@@ -20,8 +20,8 @@ Designed for **fast development and type-safe code**.
 
 ```bash
 # Clone the repository
-git clone <your-repo-url>
-cd <your-project>
+git clone https://github.com/gaga-chituashvili/weather.git
+cd weather
 
 # Install dependencies
 npm install
