@@ -1,10 +1,10 @@
 import React from "react";
-import Card from "./components/Card"
+import Weather from "./components/Weather";
 
 const App: React.FC = () => {
   return (
     <>
-      <Card />
+      <Weather />
     </>
   );
 };
