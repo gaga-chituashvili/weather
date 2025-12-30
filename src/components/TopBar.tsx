@@ -10,9 +10,19 @@ export default function TopBar() {
   const windOptions: ("kmh" | "mph")[] = ["kmh", "mph"];
   const precipitationOptions: ("mm" | "in")[] = ["mm", "in"];
 
+
+  function refreshPage() {
+  window.location.reload();
+}
+
   return (
     <header className="flex justify-between items-center">
-      <img src={logo} className="cursor-pointer" />
+     <img
+     src={logo}
+     className="cursor-pointer"
+     alt="logo"
+     onClick={refreshPage}
+     />
 
       <Listbox value={units.temperature} onChange={() => {}}>
         <div className="relative">
@@ -38,7 +48,7 @@ export default function TopBar() {
               ))}
             </div>
 
-            {/* Wind */}
+            
             <div>
               <p className="text-xs opacity-60 mb-1">Wind Speed</p>
               {windOptions.map((w) => (
