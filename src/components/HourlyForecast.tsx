@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
 import { Listbox } from "@headlessui/react";
 import { ChevronDown, Sun, Cloud, CloudSun, CloudDrizzle, CloudSnow, CloudLightning, CloudFog } from "lucide-react";
+import { MoonLoader } from "react-spinners";
 
 type Hour = {
   time: string;
   icon: JSX.Element;
   temperature: string;
+};
+
+type HourlyForecastProps = {
+  location: { lat: number; lon: number; cityName: string };
 };
 
 const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -23,7 +28,7 @@ function getWeatherIcon(code: number): JSX.Element {
   return <Cloud size={size} className="text-gray-400" />;
 }
 
-export default function HourlyForecast() {
+export default function HourlyForecast({ location }: HourlyForecastProps) {
   const [selectedDay, setSelectedDay] = useState(daysOfWeek[0]);
   const [hours, setHours] = useState<Hour[]>([]);
 
@@ -31,7 +36,7 @@ export default function HourlyForecast() {
     async function fetchWeather() {
       try {
         const res = await fetch(
-          "https://api.open-meteo.com/v1/forecast?latitude=41.7151&longitude=44.8271&hourly=temperature_2m,weathercode&timezone=Asia/Tbilisi"
+          `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&hourly=temperature_2m,weathercode&timezone=Asia/Tbilisi`
         );
         const data = await res.json();
 
@@ -53,7 +58,7 @@ export default function HourlyForecast() {
     }
 
     fetchWeather();
-  }, [selectedDay]);
+  }, [location.lat, location.lon, selectedDay]);
 
   return (
     <div className="bg-panel rounded-xl2 p-6">
@@ -87,7 +92,7 @@ export default function HourlyForecast() {
       </div>
 
       <div className="flex flex-col space-y-4 overflow-y-auto h-80 pr-2 scrollbar-thin scrollbar-thumb-panelSoft scrollbar-track-panel">
-        {hours.length === 0 && <p className="text-muted">Loading...</p>}
+        {hours.length === 0 && <MoonLoader color="#0e0c03" size={80} />}
         {hours.map((item, index) => (
           <div
             key={index}

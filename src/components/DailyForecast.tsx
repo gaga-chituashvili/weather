@@ -16,6 +16,10 @@ type DayForecast = {
   minTemp: string;
 };
 
+type DailyForecastProps = {
+  location: { lat: number; lon: number; cityName: string };
+};
+
 function getWeatherIcon(code: number): JSX.Element {
   const size = 32;
   if (code === 0) return <Sun size={size} className="text-yellow-400" />;
@@ -29,13 +33,13 @@ function getWeatherIcon(code: number): JSX.Element {
   return <Cloud size={size} className="text-gray-400" />;
 }
 
-export default function DailyForecast() {
+export default function DailyForecast({ location }: DailyForecastProps) {
   const [days, setDays] = useState<DayForecast[]>([]);
 
   useEffect(() => {
     async function fetchWeather() {
       const res = await fetch(
-        "https://api.open-meteo.com/v1/forecast?latitude=41.7151&longitude=44.8271&daily=temperature_2m_max,temperature_2m_min,weathercode&current_weather=true&timezone=Asia/Tbilisi"
+        `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&daily=temperature_2m_max,temperature_2m_min,weathercode&current_weather=true&timezone=Asia/Tbilisi`
       );
       const data = await res.json();
 
@@ -53,7 +57,7 @@ export default function DailyForecast() {
     }
 
     fetchWeather();
-  }, []);
+  }, [location.lat, location.lon]);
 
   if (!days.length) return <p>Loading daily forecast...</p>;
 

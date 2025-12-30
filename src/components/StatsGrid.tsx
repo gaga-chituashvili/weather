@@ -5,7 +5,11 @@ type WeatherStat = {
   value: string;
 };
 
-export default function StatsGrid() {
+type StatsGridProps = {
+  location: { lat: number; lon: number; cityName: string };
+};
+
+export default function StatsGrid({ location }: StatsGridProps) {
   const [stats, setStats] = useState<WeatherStat[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -13,13 +17,13 @@ export default function StatsGrid() {
     async function fetchStats() {
       try {
         const res = await fetch(
-          "https://api.open-meteo.com/v1/forecast?latitude=41.7151&longitude=44.8271&current_weather=true&hourly=relativehumidity_2m,windspeed_10m&timezone=Asia/Tbilisi"
+          `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&current_weather=true&hourly=relativehumidity_2m,windspeed_10m&timezone=Asia/Tbilisi`
         );
         const data = await res.json();
 
         const current = data.current_weather;
         const hourIndex = 0;
-        
+
         const hourlyHumidity = data.hourly.relativehumidity_2m[hourIndex] + "%";
         const hourlyWind = data.hourly.windspeed_10m[hourIndex] + " km/h";
 
@@ -39,7 +43,7 @@ export default function StatsGrid() {
     }
 
     fetchStats();
-  }, []);
+  }, [location.lat, location.lon]);
 
   if (loading) return <p className="text-muted mt-4">Loading stats...</p>;
 
