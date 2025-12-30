@@ -4,11 +4,12 @@ import { Listbox } from "@headlessui/react";
 import { ChevronDown, Sun, Cloud, CloudSun, CloudDrizzle, CloudSnow, CloudLightning, CloudFog } from "lucide-react";
 import { MoonLoader } from "react-spinners";
 import type { ReactNode } from "react";
+import { useUnits } from "../context/UnitsContext";
 
 type Hour = {
   time: string;
   icon: ReactNode;
-  temperature: string;
+  temperature: number;
 };
 
 type HourlyForecastProps = {
@@ -33,6 +34,7 @@ function getWeatherIcon(code: number): ReactElement {
 export default function HourlyForecast({ location }: HourlyForecastProps) {
   const [selectedDay, setSelectedDay] = useState(daysOfWeek[0]);
   const [hours, setHours] = useState<Hour[]>([]);
+  const { units } = useUnits();
 
   useEffect(() => {
     async function fetchWeather() {
@@ -48,7 +50,7 @@ export default function HourlyForecast({ location }: HourlyForecastProps) {
           if (dayName !== selectedDay) return null;
           return {
             time: date.getHours() + ":00",
-            temperature: Math.round(data.hourly.temperature_2m[i]) + "°",
+            temperature: Math.round(data.hourly.temperature_2m[i]),
             icon: getWeatherIcon(data.hourly.weathercode[i]),
           };
         }).filter(Boolean) as Hour[];
@@ -61,6 +63,9 @@ export default function HourlyForecast({ location }: HourlyForecastProps) {
 
     fetchWeather();
   }, [location.lat, location.lon, selectedDay]);
+
+  const convertTemp = (temp: number) => 
+    units.temperature === "c" ? temp : Math.round(temp * 1.8 + 32);
 
   return (
     <div className="bg-panel rounded-xl2 p-6">
@@ -104,7 +109,7 @@ export default function HourlyForecast({ location }: HourlyForecastProps) {
               <span>{item.time}</span>
               <span>{item.icon}</span>
             </div>
-            <span>{item.temperature}</span>
+            <span>{convertTemp(item.temperature)}°</span>
           </div>
         ))}
       </div>

@@ -10,6 +10,7 @@ import {
   CloudSun,
 } from "lucide-react";
 import { MoonLoader } from "react-spinners";
+import { useUnits } from "../context/UnitsContext";
 
 type CurrentWeather = {
   temperature: number;
@@ -38,6 +39,7 @@ function getWeatherIcon(code: number): ReactElement {
 
 export default function MainCard({ location }: MainCardProps) {
   const [currentWeather, setCurrentWeather] = useState<CurrentWeather | null>(null);
+  const { units } = useUnits(); 
 
   useEffect(() => {
     async function fetchWeather() {
@@ -61,6 +63,11 @@ export default function MainCard({ location }: MainCardProps) {
 
   if (!currentWeather) return <MoonLoader color="#0e0c03" size={80} />;
 
+  const temperature =
+    units.temperature === "c"
+      ? Math.round(currentWeather.temperature)
+      : Math.round(currentWeather.temperature * 1.8 + 32);
+
   const weatherIcon = getWeatherIcon(currentWeather.weathercode);
   const date = new Date(currentWeather.time).toLocaleDateString("en-US", {
     weekday: "long",
@@ -78,7 +85,7 @@ export default function MainCard({ location }: MainCardProps) {
 
       <div className="flex items-center gap-x-2">
         <div>{weatherIcon}</div>
-        <span className="text-7xl font-bold">{Math.round(currentWeather.temperature)}°</span>
+        <span className="text-7xl font-bold">{temperature}°</span>
       </div>
     </div>
   );

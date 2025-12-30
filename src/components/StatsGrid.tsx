@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useUnits } from "../context/UnitsContext";
 
 type WeatherStat = {
   label: string;
@@ -10,6 +11,7 @@ type StatsGridProps = {
 };
 
 export default function StatsGrid({ location }: StatsGridProps) {
+  const { units } = useUnits(); 
   const [stats, setStats] = useState<WeatherStat[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -17,21 +19,29 @@ export default function StatsGrid({ location }: StatsGridProps) {
     async function fetchStats() {
       try {
         const res = await fetch(
-          `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&current_weather=true&hourly=relativehumidity_2m,windspeed_10m&timezone=Asia/Tbilisi`
+          `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&current_weather=true&hourly=relativehumidity_2m,windspeed_10m,precipitation&timezone=Asia/Tbilisi`
         );
         const data = await res.json();
 
         const current = data.current_weather;
         const hourIndex = 0;
 
-        const hourlyHumidity = data.hourly.relativehumidity_2m[hourIndex] + "%";
-        const hourlyWind = data.hourly.windspeed_10m[hourIndex] + " km/h";
+        const humidity = data.hourly.relativehumidity_2m[hourIndex] + "%";
+
+        const wind =
+          units.wind === "kmh"
+            ? data.hourly.windspeed_10m[hourIndex] + " km/h"
+            : Math.round(data.hourly.windspeed_10m[hourIndex] / 1.609) + " mph";
+
+        const precipitation = data.hourly.precipitation
+          ? data.hourly.precipitation[hourIndex] + " mm"
+          : "0 mm";
 
         const dynamicStats: WeatherStat[] = [
           { label: "Feels Like", value: Math.round(current.temperature) + "°" },
-          { label: "Humidity", value: hourlyHumidity },
-          { label: "Wind", value: hourlyWind },
-          { label: "Precipitation", value: "0 mm" },
+          { label: "Humidity", value: humidity },
+          { label: "Wind", value: wind },
+          { label: "Precipitation", value: precipitation },
         ];
 
         setStats(dynamicStats);
@@ -43,7 +53,7 @@ export default function StatsGrid({ location }: StatsGridProps) {
     }
 
     fetchStats();
-  }, [location.lat, location.lon]);
+  }, [location.lat, location.lon, units.wind]);
 
   if (loading) return <p className="text-muted mt-4">Loading stats...</p>;
 

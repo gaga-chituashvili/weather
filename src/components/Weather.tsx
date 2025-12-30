@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { UnitsProvider } from "../context/UnitsContext";
 import TopBar from "./TopBar";
 import SearchBar from "./SearchBar";
 import MainCard from "./MainCard";
@@ -18,24 +19,26 @@ export default function Weather() {
   };
 
   return (
-    <div className="min-h-screen bg-bg text-white px-16 py-10">
-      <TopBar />
+    <UnitsProvider>
+      <div className="min-h-screen bg-bg text-white px-16 py-10">
+        <TopBar />
 
-      <h1 className="text-4xl font-bold text-center mt-14">
-        How's the sky looking today?
-      </h1>
+        <h1 className="text-4xl font-bold text-center mt-14">
+          How's the sky looking today?
+        </h1>
 
-      <SearchBar onSearch={handleSearch} />
+        <SearchBar onSearch={handleSearch} />
 
-      <div className="grid grid-cols-[2fr_1fr] gap-8 mt-14">
-        <div>
-          <MainCard location={location} />
-          <StatsGrid location={location} />
+        <div className="grid grid-cols-[2fr_1fr] gap-8 mt-14">
+          <div>
+            <MainCard location={location} />
+            <StatsGrid location={location} />
+          </div>
+          <HourlyForecast location={location} />
         </div>
-        <HourlyForecast location={location} />
-      </div>
 
-      <DailyForecast location={location} />
-    </div>
+        <DailyForecast location={location} />
+      </div>
+    </UnitsProvider>
   );
 }

@@ -9,18 +9,19 @@ import {
   CloudFog,
   CloudSun,
 } from "lucide-react";
+import { MoonLoader } from "react-spinners";
+import { useUnits } from "../context/UnitsContext";
 
 type DayForecast = {
   day: string;
-  icon: ReactElement
-  maxTemp: string;
-  minTemp: string;
+  icon: ReactElement;
+  maxTemp: number;
+  minTemp: number;
 };
 
 type DailyForecastProps = {
   location: { lat: number; lon: number; cityName: string };
 };
-
 
 function getWeatherIcon(code: number): ReactElement {
   const size = 32;
@@ -37,31 +38,38 @@ function getWeatherIcon(code: number): ReactElement {
 
 export default function DailyForecast({ location }: DailyForecastProps) {
   const [days, setDays] = useState<DayForecast[]>([]);
+  const { units } = useUnits();
 
   useEffect(() => {
     async function fetchWeather() {
-      const res = await fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&daily=temperature_2m_max,temperature_2m_min,weathercode&current_weather=true&timezone=Asia/Tbilisi`
-      );
-      const data = await res.json();
+      try {
+        const res = await fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=Asia/Tbilisi`
+        );
+        const data = await res.json();
 
-      const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-      const forecast: DayForecast[] = data.daily.time.map(
-        (date: string, index: number) => ({
+        const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+        const forecast: DayForecast[] = data.daily.time.map((date: string, index: number) => ({
           day: weekdays[new Date(date).getDay()],
           icon: getWeatherIcon(data.daily.weathercode[index]),
-          maxTemp: Math.round(data.daily.temperature_2m_max[index]) + "°",
-          minTemp: Math.round(data.daily.temperature_2m_min[index]) + "°",
-        })
-      );
+          maxTemp: Math.round(data.daily.temperature_2m_max[index]),
+          minTemp: Math.round(data.daily.temperature_2m_min[index]),
+        }));
 
-      setDays(forecast);
+        setDays(forecast);
+      } catch (error) {
+        console.error("Failed to fetch daily weather:", error);
+      }
     }
 
     fetchWeather();
   }, [location.lat, location.lon]);
 
-  if (!days.length) return <p>Loading daily forecast...</p>;
+  if (!days.length) return <MoonLoader color="#0e0c03" size={80} />;
+
+  const convertTemp = (temp: number) =>
+    units.temperature === "c" ? temp : Math.round(temp * 1.8 + 32);
 
   return (
     <div className="grid grid-cols-7 gap-4 mt-10">
@@ -70,7 +78,8 @@ export default function DailyForecast({ location }: DailyForecastProps) {
           <p className="text-sm font-medium">{item.day}</p>
           <div className="my-2">{item.icon}</div>
           <p className="text-sm">
-            {item.maxTemp} <span className="text-muted">{item.minTemp}</span>
+            {convertTemp(item.maxTemp)}°{" "}
+            <span className="text-muted">{convertTemp(item.minTemp)}°</span>
           </p>
         </div>
       ))}
