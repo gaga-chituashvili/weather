@@ -1,11 +1,13 @@
+import type { ReactElement } from "react";
 import { useEffect, useState } from "react";
 import { Listbox } from "@headlessui/react";
 import { ChevronDown, Sun, Cloud, CloudSun, CloudDrizzle, CloudSnow, CloudLightning, CloudFog } from "lucide-react";
 import { MoonLoader } from "react-spinners";
+import type { ReactNode } from "react";
 
 type Hour = {
   time: string;
-  icon: JSX.Element;
+  icon: ReactNode;
   temperature: string;
 };
 
@@ -15,7 +17,7 @@ type HourlyForecastProps = {
 
 const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-function getWeatherIcon(code: number): JSX.Element {
+function getWeatherIcon(code: number): ReactElement {
   const size = 24;
   if (code === 0) return <Sun size={size} className="text-yellow-400" />;
   if (code === 1 || code === 2) return <CloudSun size={size} className="text-yellow-300" />;
