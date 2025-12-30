@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import type { ReactElement } from "react";
 import {
   Sun,
   Cloud,
@@ -11,7 +12,7 @@ import {
 
 type DayForecast = {
   day: string;
-  icon: JSX.Element;
+  icon: ReactElement
   maxTemp: string;
   minTemp: string;
 };
@@ -20,7 +21,8 @@ type DailyForecastProps = {
   location: { lat: number; lon: number; cityName: string };
 };
 
-function getWeatherIcon(code: number): JSX.Element {
+
+function getWeatherIcon(code: number): ReactElement {
   const size = 32;
   if (code === 0) return <Sun size={size} className="text-yellow-400" />;
   if (code === 1 || code === 2) return <CloudSun size={size} className="text-yellow-300" />;
