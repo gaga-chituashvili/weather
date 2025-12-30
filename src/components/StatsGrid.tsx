@@ -26,19 +26,28 @@ export default function StatsGrid({ location }: StatsGridProps) {
         const current = data.current_weather;
         const hourIndex = 0;
 
+        
         const humidity = data.hourly.relativehumidity_2m[hourIndex] + "%";
 
+        
         const wind =
           units.wind === "kmh"
             ? data.hourly.windspeed_10m[hourIndex] + " km/h"
             : Math.round(data.hourly.windspeed_10m[hourIndex] / 1.609) + " mph";
 
+        
         const precipitation = data.hourly.precipitation
           ? data.hourly.precipitation[hourIndex] + " mm"
           : "0 mm";
 
+        
+        const feelsLike =
+          units.temperature === "c"
+            ? Math.round(current.temperature) + "°"
+            : Math.round(current.temperature * 1.8 + 32) + "°";
+
         const dynamicStats: WeatherStat[] = [
-          { label: "Feels Like", value: Math.round(current.temperature) + "°" },
+          { label: "Feels Like", value: feelsLike },
           { label: "Humidity", value: humidity },
           { label: "Wind", value: wind },
           { label: "Precipitation", value: precipitation },
@@ -53,12 +62,12 @@ export default function StatsGrid({ location }: StatsGridProps) {
     }
 
     fetchStats();
-  }, [location.lat, location.lon, units.wind]);
+  }, [location.lat, location.lon, units.wind, units.temperature]);
 
   if (loading) return <p className="text-muted mt-4">Loading stats...</p>;
 
   return (
-    <div className="grid grid-cols-4 gap-4 mt-10">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-6 md:mt-10">
       {stats.map((item, index) => (
         <div key={index} className="bg-panelSoft rounded-xl p-4">
           <p className="text-xs text-muted">{item.label}</p>

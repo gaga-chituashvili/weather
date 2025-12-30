@@ -39,7 +39,7 @@ function getWeatherIcon(code: number): ReactElement {
 
 export default function MainCard({ location }: MainCardProps) {
   const [currentWeather, setCurrentWeather] = useState<CurrentWeather | null>(null);
-  const { units } = useUnits(); 
+  const { units } = useUnits();
 
   useEffect(() => {
     async function fetchWeather() {
@@ -77,15 +77,15 @@ export default function MainCard({ location }: MainCardProps) {
   });
 
   return (
-    <div className="flex justify-between items-center bg-gradient-to-r from-cardBlue to-cardBlueDark rounded-xl2 p-8">
-      <div className="flex flex-col gap-y-1">
+    <div className="flex flex-col sm:flex-row justify-between items-center sm:items-start bg-gradient-to-r from-cardBlue to-cardBlueDark rounded-xl2 p-1 sm:p-8 w-full gap-6">
+      <div className="flex flex-col gap-y-1 text-center sm:text-left">
         <span className="text-sm opacity-80">{location.cityName}</span>
-        <span className="text-xs opacity-60 mb-8">{date}</span>
+        <span className="text-xs opacity-60">{date}</span>
       </div>
 
       <div className="flex items-center gap-x-2">
         <div>{weatherIcon}</div>
-        <span className="text-7xl font-bold">{temperature}°</span>
+        <span className="text-4xl md:text-7xl font-bold">{temperature}°</span>
       </div>
     </div>
   );

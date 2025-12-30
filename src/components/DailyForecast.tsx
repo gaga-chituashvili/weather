@@ -72,17 +72,19 @@ export default function DailyForecast({ location }: DailyForecastProps) {
     units.temperature === "c" ? temp : Math.round(temp * 1.8 + 32);
 
   return (
-    <div className="grid grid-cols-7 gap-4 mt-10">
-      {days.map((item, i) => (
-        <div key={i} className="bg-panel rounded-xl p-4 text-center">
-          <p className="text-sm font-medium">{item.day}</p>
-          <div className="my-2">{item.icon}</div>
-          <p className="text-sm">
-            {convertTemp(item.maxTemp)}°{" "}
-            <span className="text-muted">{convertTemp(item.minTemp)}°</span>
-          </p>
-        </div>
-      ))}
+    <div className="overflow-x-auto">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4 mt-10 min-w-max">
+        {days.map((item, i) => (
+          <div key={i} className="bg-panel rounded-xl p-4 text-center min-w-[100px]">
+            <p className="text-sm font-medium">{item.day}</p>
+            <div className="my-2">{item.icon}</div>
+            <p className="text-sm">
+              {convertTemp(item.maxTemp)}°{" "}
+              <span className="text-muted">{convertTemp(item.minTemp)}°</span>
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

@@ -20,12 +20,12 @@ export default function Weather() {
 
   return (
     <UnitsProvider>
-      <div className="min-h-screen bg-bg text-white px-16 py-10">
+      <div className="min-h-screen bg-bg text-white md:px-16 md:py-10 px-2 py-2">
         <TopBar />
 
-        <h1 className="text-4xl font-bold text-center mt-14">
+        <h2 className="text-xl md:text-4xl font-bold text-center mt-14">
           How's the sky looking today?
-        </h1>
+        </h2>
 
         <SearchBar onSearch={handleSearch} />
 
