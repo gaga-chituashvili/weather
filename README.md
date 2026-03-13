@@ -63,6 +63,21 @@ Designed for **fast development and type-safe code**.
 └── weather                        # Project identifier / environment marker
 ```
 
+## Tech Stack
+
+### Frontend
+
+- React  
+- React DOM  
+- Vite  
+- TypeScript  
+- TailwindCSS  
+- React Router DOM  
+- Headless UI  
+- Lucide React  
+- React Spinners  
+
+
 ## Installation
 
 ```bash
